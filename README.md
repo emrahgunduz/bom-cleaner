@@ -10,13 +10,13 @@ Script has the ability to detect if it is called from web or terminal and echoes
 Both web and terminal versions let you select file types for checking. Web version has php and html files defines as defaults but terminal has none, so you must push a Y button for each asked extension. It is possible to define custom extensions if you need to.
 
 ##Here are some screenshots. 
-####This if when you are running from the linux terminal:
+####When you are running from the linux terminal:
 <img src="http://emrahgunduz.com/wp-content/uploads/2013/04/c.jpg">
 
-####Startup screen when called from web
+####Startup screen when called from web:
 <img src="http://emrahgunduz.com/wp-content/uploads/2013/04/a.jpg">
 
-####After searching for files
+####After searching for files:
 <img src="http://emrahgunduz.com/wp-content/uploads/2013/04/b.jpg">
 
 
