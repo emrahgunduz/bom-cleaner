@@ -28,16 +28,28 @@
  * even if the author has been advised of the possibility of such damages.
  * 
  */
+// Define some PHP settings
 @ini_set( 'zlib.output_compression', 0 );
 @ini_set( 'implicit_flush', 1 );
 @ob_end_clean();
+// We do not want the script to stop working for long processes
 set_time_limit( 0 );
 ob_implicit_flush( 1 );
 
+/**
+ * Detect if we are runnning under Windows
+ */
 define( 'WIN', strtoupper( substr( PHP_OS, 0, 3 ) ) === 'WIN' );
-define( 'VERSION', 0.5 );
+/**
+ * Current version
+ */
+define( 'VERSION', 0.55 );
+/**
+ * The folder script resides
+ */
 define( 'ROOT', dirname( __FILE__ ) );
 
+// Terminal color definitions
 define( 'COLOR_BLACK', WIN ? "" : "\033[0;30m"  );
 define( 'COLOR_RED', WIN ? "" : "\033[0;31m"  );
 define( 'COLOR_GREEN', WIN ? "" : "\033[0;32m"  );
@@ -57,6 +69,9 @@ define( 'COLOR_CYAN_BLINK', WIN ? "" : "\033[5;36m"  );
 define( 'COLOR_WHITE_BLINK', WIN ? "" : "\033[5;37m"  );
 define( 'COLOR_RESET_BLINK', WIN ? "" : "\033[5m"  );
 
+/*
+ * Check if we are running in a terminal or called from web
+ */
 if ( PHP_SAPI == 'cli' ) {
   $types = array( );
   echo COLOR_YELLOW . "\n" .
@@ -115,6 +130,12 @@ if ( PHP_SAPI == 'cli' ) {
   exit();
 }
 
+/**
+ * Keeps the answers of file extension questions.
+ * Called from terminal.
+ * @global array $types
+ * @param string $t
+ */
 function keepTrackOfTypes ( $t ) {
   global $types;
   echo COLOR_GREEN;
@@ -126,6 +147,12 @@ function keepTrackOfTypes ( $t ) {
   echo COLOR_WHITE;
 }
 
+/**
+ * Keeps the answers of file extension questions.
+ * Called from web.
+ * @global array $types
+ * @param string $t
+ */
 function keepTrackOfTypesString () {
   global $types;
   echo COLOR_GREEN;
@@ -140,6 +167,12 @@ function keepTrackOfTypesString () {
   echo COLOR_WHITE;
 }
 
+/**
+ * Reads file and folders and performs cleaning, is an internal function.
+ * Called from terminal.
+ * @global array $types
+ * @param mixed $HOME
+ */
 function cleanFiles ( $HOME = false ) {
   global $types;
 
@@ -188,6 +221,12 @@ function cleanFiles ( $HOME = false ) {
   }
 }
 
+/**
+ * Reads file and folders and performs cleaning, is an internal function.
+ * Called from web.
+ * @global array $types
+ * @param mixed $HOME
+ */
 function cleanFilesHtml ( $HOME = false ) {
   global $types;
 
@@ -237,10 +276,13 @@ function cleanFilesHtml ( $HOME = false ) {
   }
 }
 
+/**
+ * Checks if the string has BOM
+ * @param string $string
+ * @return bool
+ */
 function hasBom ( $string ) {
-  if ( substr( $string, 0, 3 ) == pack( "CCC", 0xef, 0xbb, 0xbf ) )
-    return true;
-  return false;
+  return (substr( $string, 0, 3 ) == pack( "CCC", 0xef, 0xbb, 0xbf ));
 }
 
 // Running from web
@@ -569,8 +611,6 @@ $boot = gzinflate( $comp );
   </head>
   <body>
 
-    <!-- Navbar
-    ================================================== -->
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
