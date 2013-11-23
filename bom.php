@@ -4,20 +4,20 @@
  * 
  * Hi,
  * This is a single php file for cleaning the UTF8 byte mark order from files on
- * a hosted web site. The tool searches for every single files and directories
+ * a hosted web site. The tool searches for every directory and included files
  * where it's located. So simply put it to the top folder of your site and run.
  * 
  * The script can be called from the web and is also capable of running from the
  * terminal screen, is also designed for both linux and windows based systems.
  * 
  * Script will alert you if it finds bom in any file, and if possible cleans it.
- * If a file cannot be read you will also get an error.
+ * If a file cannot be read you will be notified.
  * 
  * If you want this to work fully, give the script both write and read permissions.
  * 
  * And before you run it, please get a backup of your whole site!
  * 
- * Copyright (c) 2013 Emrah Gunduz
+ * WARNING:
  * The program is distributed in the hope that it will be useful, but without 
  * any warranty. The entire risk as to the quality and performance of the 
  * program is with you. In no event the author will be liable to you for damages, 
@@ -26,6 +26,8 @@
  * loss of data or data being rendered inaccurate or losses sustained by you or 
  * third parties or a failure of the program to operate with any other programs), 
  * even if the author has been advised of the possibility of such damages.
+ *
+ * THIS SOFTWARE IS AND CAN BE DISTRIBUTED UNDER MIT LICENSE
  * 
  */
 // Define some PHP settings
@@ -45,43 +47,43 @@ define( 'WIN', strtoupper( substr( PHP_OS, 0, 3 ) ) === 'WIN' );
  */
 define( 'VERSION', 0.55 );
 /**
- * The folder script resides
+ * The folder script resides under...
  */
 define( 'ROOT', dirname( __FILE__ ) );
 
 // Terminal color definitions
-define( 'COLOR_BLACK', WIN ? "" : "\033[0;30m"  );
-define( 'COLOR_RED', WIN ? "" : "\033[0;31m"  );
-define( 'COLOR_GREEN', WIN ? "" : "\033[0;32m"  );
-define( 'COLOR_YELLOW', WIN ? "" : "\033[0;33m"  );
-define( 'COLOR_BLUE', WIN ? "" : "\033[0;34m"  );
-define( 'COLOR_PURPLE', WIN ? "" : "\033[0;35m"  );
-define( 'COLOR_CYAN', WIN ? "" : "\033[0;36m"  );
-define( 'COLOR_WHITE', WIN ? "" : "\033[0;37m"  );
-define( 'COLOR_RESET', WIN ? "" : "\033[0m"  );
-define( 'COLOR_BLACK_BLINK', WIN ? "" : "\033[5;30m"  );
-define( 'COLOR_RED_BLINK', WIN ? "" : "\033[5;31m"  );
-define( 'COLOR_GREEN_BLINK', WIN ? "" : "\033[5;32m"  );
-define( 'COLOR_YELLOW_BLINK', WIN ? "" : "\033[5;33m"  );
-define( 'COLOR_BLUE_BLINK', WIN ? "" : "\033[5;34m"  );
-define( 'COLOR_PURPLE_BLINK', WIN ? "" : "\033[5;35m"  );
-define( 'COLOR_CYAN_BLINK', WIN ? "" : "\033[5;36m"  );
-define( 'COLOR_WHITE_BLINK', WIN ? "" : "\033[5;37m"  );
-define( 'COLOR_RESET_BLINK', WIN ? "" : "\033[5m"  );
+define( 'COLOR_BLACK', WIN ? "" : "\033[0;30m" );
+define( 'COLOR_RED', WIN ? "" : "\033[0;31m" );
+define( 'COLOR_GREEN', WIN ? "" : "\033[0;32m" );
+define( 'COLOR_YELLOW', WIN ? "" : "\033[0;33m" );
+define( 'COLOR_BLUE', WIN ? "" : "\033[0;34m" );
+define( 'COLOR_PURPLE', WIN ? "" : "\033[0;35m" );
+define( 'COLOR_CYAN', WIN ? "" : "\033[0;36m" );
+define( 'COLOR_WHITE', WIN ? "" : "\033[0;37m" );
+define( 'COLOR_RESET', WIN ? "" : "\033[0m" );
+define( 'COLOR_BLACK_BLINK', WIN ? "" : "\033[5;30m" );
+define( 'COLOR_RED_BLINK', WIN ? "" : "\033[5;31m" );
+define( 'COLOR_GREEN_BLINK', WIN ? "" : "\033[5;32m" );
+define( 'COLOR_YELLOW_BLINK', WIN ? "" : "\033[5;33m" );
+define( 'COLOR_BLUE_BLINK', WIN ? "" : "\033[5;34m" );
+define( 'COLOR_PURPLE_BLINK', WIN ? "" : "\033[5;35m" );
+define( 'COLOR_CYAN_BLINK', WIN ? "" : "\033[5;36m" );
+define( 'COLOR_WHITE_BLINK', WIN ? "" : "\033[5;37m" );
+define( 'COLOR_RESET_BLINK', WIN ? "" : "\033[5m" );
 
 /*
  * Check if we are running in a terminal or called from web
  */
 if ( PHP_SAPI == 'cli' ) {
-  $types = array( );
+  $types = array();
   echo COLOR_YELLOW . "\n" .
-  " ____                    _\n" .
-  "|  _ \                  | |\n" .
-  "| |_) | ___  _ __ ___   | |\n" .
-  "|  _ < / _ \| '_ ` _ \  | |\n" .
-  "| |_) | (_) | | | | | | |_|\n" .
-  "|____/ \___/|_| |_| |_| (_)\n" .
-  "        version  " . VERSION . COLOR_RESET . "\n\n\n";
+      " ____                    _\n" .
+      "|  _ \                  | |\n" .
+      "| |_) | ___  _ __ ___   | |\n" .
+      "|  _ < / _ \| '_ ` _ \  | |\n" .
+      "| |_) | (_) | | | | | | |_|\n" .
+      "|____/ \___/|_| |_| |_| (_)\n" .
+      "        version  " . VERSION . COLOR_RESET . "\n\n\n";
 
   echo COLOR_WHITE . "I will clean the BOM headers from the files. Let's start!\n";
 
@@ -136,7 +138,8 @@ if ( PHP_SAPI == 'cli' ) {
  * @global array $types
  * @param string $t
  */
-function keepTrackOfTypes ( $t ) {
+function keepTrackOfTypes ( $t )
+{
   global $types;
   echo COLOR_GREEN;
   $handle = fopen( "php://stdin", "r" );
@@ -151,9 +154,10 @@ function keepTrackOfTypes ( $t ) {
  * Keeps the answers of file extension questions.
  * Called from web.
  * @global array $types
- * @param string $t
+ * @internal param string $t
  */
-function keepTrackOfTypesString () {
+function keepTrackOfTypesString ()
+{
   global $types;
   echo COLOR_GREEN;
   $handle = fopen( "php://stdin", "r" );
@@ -173,18 +177,19 @@ function keepTrackOfTypesString () {
  * @global array $types
  * @param mixed $HOME
  */
-function cleanFiles ( $HOME = false ) {
+function cleanFiles ( $HOME = false )
+{
   global $types;
 
   $slash = WIN ? "\\" : "/";
-  $folder = dir( $HOME ? $HOME : ROOT  );
+  $folder = dir( $HOME ? $HOME : ROOT );
 
-  echo COLOR_CYAN . "            " . ($HOME ? $HOME : ROOT) . "\n";
+  echo COLOR_CYAN . "            " . ( $HOME ? $HOME : ROOT ) . "\n";
 
-  $foundfolders = array( );
+  $foundfolders = array();
   $error = 0;
   while ( $file = $folder->read() ) {
-    $thisfile = ($HOME ? $HOME : ROOT) . $slash . $file;
+    $thisfile = ( $HOME ? $HOME : ROOT ) . $slash . $file;
     if ( $file != "." && $file != ".." ) {
       if ( is_dir( $thisfile ) ) {
         array_push( $foundfolders, $thisfile );
@@ -227,18 +232,19 @@ function cleanFiles ( $HOME = false ) {
  * @global array $types
  * @param mixed $HOME
  */
-function cleanFilesHtml ( $HOME = false ) {
+function cleanFilesHtml ( $HOME = false )
+{
   global $types;
 
   $slash = WIN ? "\\" : "/";
-  $folder = dir( $HOME ? $HOME : ROOT  );
+  $folder = dir( $HOME ? $HOME : ROOT );
 
-  echo '<span style="color:#C2D4FF; font-size:13px;">' . ($HOME ? $HOME : ROOT) . '</span><br/>';
+  echo '<span style="color:#C2D4FF; font-size:13px;">' . ( $HOME ? $HOME : ROOT ) . '</span><br/>';
 
-  $foundfolders = array( );
+  $foundfolders = array();
   $error = 0;
   while ( $file = $folder->read() ) {
-    $thisfile = ($HOME ? $HOME : ROOT) . $slash . $file;
+    $thisfile = ( $HOME ? $HOME : ROOT ) . $slash . $file;
     if ( $file != "." && $file != ".." ) {
       if ( is_dir( $thisfile ) ) {
         array_push( $foundfolders, $thisfile );
@@ -281,8 +287,9 @@ function cleanFilesHtml ( $HOME = false ) {
  * @param string $string
  * @return bool
  */
-function hasBom ( $string ) {
-  return (substr( $string, 0, 3 ) == pack( "CCC", 0xef, 0xbb, 0xbf ));
+function hasBom ( $string )
+{
+  return ( substr( $string, 0, 3 ) == pack( "CCC", 0xef, 0xbb, 0xbf ) );
 }
 
 // Running from web
@@ -307,7 +314,7 @@ if ( isset( $_GET[ 'action' ] ) && $_GET[ 'action' ] == 'run' ) {
 }
 
 /**
- * This is a copy of the Bootstrap v2.3.1 framework gzip compressed and base64 
+ * This is a copy of the Bootstrap v2.3.1 framework gzip compressed and base64
  * encoded for keeping everything in a single file. Copyright information can be
  * found in the html rendering of this file.
  */
@@ -597,8 +604,8 @@ MsYqbdYiPXm50DgEVLtIw9kbflqtIXGiBHYkL3DpT49nqC4MwoiFxIYojdgM533z2Zz5qqO4BXkDoY+k
 $comp = base64_decode( trim( BOOTSTRAPCSS ) );
 $boot = gzinflate( $comp );
 ?>
-<!DOCTYPE html>
-<html lang="en">
+  <!DOCTYPE html>
+  <html lang="en">
   <head>
     <meta charset="utf-8">
     <title>Bom Cleaner v.<?php echo VERSION; ?></title>
@@ -611,116 +618,121 @@ $boot = gzinflate( $comp );
   </head>
   <body>
 
-    <div class="navbar navbar-inverse navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container">
-          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="brand" href="<?php echo basename( __FILE__ ); ?>">Bom Cleaner</a>
-        </div>
+  <div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container">
+        <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="brand" href="<?php echo basename( __FILE__ ); ?>">Bom Cleaner</a>
       </div>
     </div>
+  </div>
 
-    <div class="container" style="margin-top: 80px;">
-      <div class="hero-unit">
+  <div class="container" style="margin-top: 80px;">
+    <div class="hero-unit">
 
-        <form class="bs-docs-example form-inline">
-          <h1>Select types</h1>
-          <p class="marketing-byline">I'll be starting to check from <?php echo ROOT; ?></p>
+      <form class="bs-docs-example form-inline">
+        <h1>Select types</h1>
+
+        <p class="marketing-byline">I'll be starting to check from <?php echo ROOT; ?></p>
+        <br/>
+
+        <p class="marketing-byline">Choose the extensions you would like to be checked for BOM</p>
+
+        <div class="control-group">
+          <label class="checkbox inline">
+            <input type="checkbox" class="confirm" value="php" name="type_php" checked="checked">
+            php
+          </label>
+          <label class="checkbox inline">
+            <input type="checkbox" class="confirm" value="htm" name="type_htm" checked="checked">
+            htm
+          </label>
+          <label class="checkbox inline">
+            <input type="checkbox" class="confirm" value="html" name="type_html" checked="checked">
+            html
+          </label>
+          <label class="checkbox inline">
+            <input type="checkbox" class="confirm" value="css" name="type_css">
+            css
+          </label>
+          <label class="checkbox inline">
+            <input type="checkbox" class="confirm" value="js" name="type_js">
+            js
+          </label>
+          <label class="checkbox inline">
+            <input type="checkbox" class="confirm" value="txt" name="type_txt">
+            txt
+          </label>
+          <input type="text" class="input-xlarge othertypes" style="margin-left: 20px;" placeholder="Other types (ex: xml, json,...)">
+          <button type="submit" class="btn" style="margin-left: 20px;">Start</button>
           <br/>
-          <p class="marketing-byline">Choose the extensions you would like to be checked for BOM</p>
-          <div class="control-group">
-            <label class="checkbox inline">
-              <input type="checkbox" class="confirm" value="php" name="type_php" checked="checked">
-              php
-            </label>
-            <label class="checkbox inline">
-              <input type="checkbox" class="confirm" value="htm" name="type_htm" checked="checked">
-              htm
-            </label>
-            <label class="checkbox inline">
-              <input type="checkbox" class="confirm" value="html" name="type_html" checked="checked">
-              html
-            </label>
-            <label class="checkbox inline">
-              <input type="checkbox" class="confirm" value="css" name="type_css">
-              css
-            </label>
-            <label class="checkbox inline">
-              <input type="checkbox" class="confirm" value="js" name="type_js">
-              js
-            </label>
-            <label class="checkbox inline">
-              <input type="checkbox" class="confirm" value="txt" name="type_txt">
-              txt
-            </label>
-            <input type="text" class="input-xlarge othertypes" style="margin-left: 20px;" placeholder="Other types (ex: xml, json,...)">
-            <button type="submit" class="btn" style="margin-left: 20px;">Start</button><br/>
-            <label class="checkbox inline">
-              <input type="checkbox" id="sendform" value="1" name="backup">
-              Did you back up your files? I will not take responsibility if something goes wrong.
-            </label>
+          <label class="checkbox inline">
+            <input type="checkbox" id="sendform" value="1" name="backup">
+            Did you back up your files? I will not take responsibility if something goes wrong.
+          </label>
 
-          </div>
-        </form>
-
-      </div>
-
-      <div class="echotext" style="display:none;">
-        <h1>Files and folders</h1>          
-        <div class="alert">
-          <button type="button" class="close" data-dismiss="alert">&times;</button>
-          <strong>Please wait I'm working!</strong><br/>It might take a while before I finish checking. Do not close your this page or browser...
         </div>
+      </form>
+
+    </div>
+
+    <div class="echotext" style="display:none;">
+      <h1>Files and folders</h1>
+
+      <div class="alert">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <strong>Please wait I'm working!</strong><br/>It might take a while before I finish checking. Do not close your this page or browser...
       </div>
     </div>
-    <script>
-      $(document).ready(function(){
-        $('form').on('submit', function(e){
-          e.preventDefault();
+  </div>
+  <script>
+    $(document).ready(function () {
+      $('form').on('submit', function (e) {
+        e.preventDefault();
 
-          if(!$('#sendform').is(':checked')) {
-            alert("Backup first. I'll not continue until that checkbox is checked.");
-            return false;
-          }
-
-          var compile = {
-            'types' : $('.othertypes').val(),
-            'ext' : []
-          };
-
-          $('.confirm').each(function(){
-            compile.ext.push($(this).val());
-          });
-
-          $('.hero-unit').slideUp('fast');
-          
-          $('.echotext').slideDown('fast');
-
-          // Jquery ajax command
-          $.ajax({
-            type: 'POST',
-            data: compile,
-            dataType: 'html', // xml, json, script or html
-            async: true,
-            contentType: 'application/x-www-form-urlencoded;charset=UTF8',
-            url: "?action=run",
-            error: function(XMLHttpRequest, textStatus, errorThrown) {
-              console.log("ERROR: " + textStatus + "\n" + errorThrown);
-            },
-            success: function(data) {             
-              $('.echotext').append(data);
-              $('.alert').slideUp('fast');
-            }
-          });
-
+        if (!$('#sendform').is(':checked')) {
+          alert("Backup first. I'll not continue until that checkbox is checked.");
           return false;
+        }
+
+        var compile = {
+          'types': $('.othertypes').val(),
+          'ext': []
+        };
+
+        $('.confirm').each(function () {
+          compile.ext.push($(this).val());
         });
+
+        $('.hero-unit').slideUp('fast');
+
+        $('.echotext').slideDown('fast');
+
+        // Jquery ajax command
+        $.ajax({
+          type: 'POST',
+          data: compile,
+          dataType: 'html', // xml, json, script or html
+          async: true,
+          contentType: 'application/x-www-form-urlencoded;charset=UTF8',
+          url: "?action=run",
+          error: function (XMLHttpRequest, textStatus, errorThrown) {
+            console.log("ERROR: " + textStatus + "\n" + errorThrown);
+          },
+          success: function (data) {
+            $('.echotext').append(data);
+            $('.alert').slideUp('fast');
+          }
+        });
+
+        return false;
       });
-    </script>
+    });
+  </script>
   </body>
-</html>
+  </html>
 <?php
